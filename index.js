@@ -8,6 +8,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(require('./routes/user.route'))
 
 app.use(morgan("dev"));
 app.use(express.static(__dirname + "/assets"));
