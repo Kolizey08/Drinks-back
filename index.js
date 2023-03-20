@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use(morgan("dev"));
+app.use(require('./routes/cart.route'))
 app.use(express.static(__dirname + "/assets"));
 
 const { PORT, MONGO_SERVER } = process.env;
