@@ -14,6 +14,8 @@ app.use(require("./routes/cart.route"));
 app.use(require("./routes/user.route"));
 app.use(require("./routes/order.route"));
 app.use(express.static(__dirname + "/assets"));
+app.use(express.json())
+app.use(require('./routes/products.route'))
 
 const { PORT, MONGO_SERVER } = process.env;
 
