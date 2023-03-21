@@ -4,7 +4,7 @@ const { userController } = require('../controllers/users.controller')
 
 const router = Router()
 
-router.post('/user', userController.addUser)
+router.post('/registration', userController.addUser)
 router.post('/authorization', userController.authorizationUser)
 router.patch('/user/:id', userController.updateUser)
 router.delete('/user/:id', userController.deleteUser)
