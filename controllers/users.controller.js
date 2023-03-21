@@ -22,13 +22,13 @@ module.exports.userController = {
             const condidate = await User.findOne({username})
 
             if(!condidate) {
-                return res.status(401).json('Неправильное имя ползователя')
+                return res.status(401).json({error: 'Неправильное имя ползователя'})
             }
 
             const valid = await bcrypt.compare(password, condidate.password)
 
             if(!valid) {
-                return res.status(401).json('неправильный пароль')
+                return res.status(401).json({error: 'неправильный пароль'})
             }
 
             const payload = {
@@ -40,7 +40,7 @@ module.exports.userController = {
                 expiresIn: '24h'
             })
 
-            res.json({token})
+            res.json(token)
         } catch (error) {
             res.json(error.message)
         }
