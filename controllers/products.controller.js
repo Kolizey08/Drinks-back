@@ -40,6 +40,14 @@ module.exports.ProductController = {
   },
   getProduct: async (req, res) => {
     try {
+      const product = await Product.find()
+      res.json(product)
+    } catch (error) {
+      res.json(error.message)
+    }
+  },
+  getProductId: async (req, res) => {
+    try {
       const product = await Product.findById(req.params.id);
       res.json(product);
     } catch (error) {}
