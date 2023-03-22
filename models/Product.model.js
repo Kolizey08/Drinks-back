@@ -5,7 +5,11 @@ const ProductSchema = mongoose.Schema({
     name: String,
     price: Number,
     expo: String,
-    weight: Number
+    weight: Number,
+    category: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Category'
+    }
 });
 
 const Product = mongoose.model('Product', ProductSchema)
