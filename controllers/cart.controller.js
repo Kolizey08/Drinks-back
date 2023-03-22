@@ -1,4 +1,5 @@
 const Cart = require("../models/Cart.model");
+const Product = require("../models/Product.model");
 
 module.exports.cartController = {
   createCart: async (req, res) => {
@@ -6,6 +7,7 @@ module.exports.cartController = {
       const addedCart = await Cart.create({
         user: req.body.user,
         items: [],
+        count: 0,
         totalPrice: 0,
       });
       return res.json(addedCart);
@@ -15,7 +17,9 @@ module.exports.cartController = {
   },
   getCartById: async (req, res) => {
     try {
-      const cartById = await Cart.findById(req.params.id);
+      const cartById = await Cart.findOne({ user: req.params.user }).populate(
+        "items.item"
+      );
       return res.json(cartById);
     } catch (err) {
       return res.json(err);
@@ -34,9 +38,7 @@ module.exports.cartController = {
       const patchedCart = await Cart.findByIdAndUpdate(
         req.params.id,
         {
-          user: req.body.user,
-          items: [],
-          totalPrice: 0,
+          items: req.body.items,
         },
         { new: true }
       );
@@ -47,12 +49,16 @@ module.exports.cartController = {
   },
   addProductToBasket: async (req, res) => {
     try {
+      const product = await Product.findById(req.body.item);
+      const cart = await Cart.findById(req.params.id);
+
       const addedProduct = await Cart.findByIdAndUpdate(
         req.params.id,
         {
           $push: {
-            items: req.body.item,
+            items: { item: req.body.item, count: req.body.count },
           },
+          totalPrice: cart.totalPrice + product.price * req.body.count,
         },
         { new: true }
       );
@@ -63,14 +69,21 @@ module.exports.cartController = {
   },
   deleteProductFromBasket: async (req, res) => {
     try {
-      const deletedProduct = await Cart.findByIdAndUpdate(
-        req.params.id,
+      const cart = await Cart.findOne({ user: req.params.id });
+      const deletetItem = cart.items.find((item) => item._id.toString() === req.body.itemId);
+      const product = await Product.findById(deletetItem.item.toString());
+
+      console.log(deletetItem.count);
+
+      const deletedProduct = await Cart.findOneAndUpdate(
+        { user: req.params.id },
         {
           $pull: {
             items: {
               _id: req.body.itemId,
             },
           },
+          totalPrice: cart.totalPrice - product.price * deletetItem.count,
         },
         { new: true }
       );
