@@ -47,7 +47,7 @@ module.exports.cartController = {
       return res.json(err);
     }
   },
-  addProductToBasket: async (req, res) => {
+  addProductToCart: async (req, res) => {
     try {
       const product = await Product.findById(req.body.item);
       const cart = await Cart.findById(req.params.id);
@@ -67,13 +67,13 @@ module.exports.cartController = {
       return res.json(err);
     }
   },
-  deleteProductFromBasket: async (req, res) => {
+  deleteProductFromCart: async (req, res) => {
     try {
       const cart = await Cart.findOne({ user: req.params.id });
-      const deletetItem = cart.items.find((item) => item._id.toString() === req.body.itemId);
+      const deletetItem = cart.items.find(
+        (item) => item._id.toString() === req.body.itemId
+      );
       const product = await Product.findById(deletetItem.item.toString());
-
-      console.log(deletetItem.count);
 
       const deletedProduct = await Cart.findOneAndUpdate(
         { user: req.params.id },
@@ -88,6 +88,72 @@ module.exports.cartController = {
         { new: true }
       );
       return res.json(deletedProduct);
+    } catch (err) {
+      return res.json(err);
+    }
+  },
+  clearCart: async (req, res) => {
+    try {
+      await Cart.findOneAndUpdate(
+        { user: req.params.id },
+        {
+          items: [],
+          totalPrice: 0,
+        }
+      );
+      return res.json("Корзина очищена!");
+    } catch (err) {
+      return res.json(err);
+    }
+  },
+  oneMore: async (req, res) => {
+    try {
+      const cart = await Cart.findOne({ user: req.params.id });
+      const moredItem = cart.items.find((item) => item._id == req.body.itemId);
+      const product = await Product.findById(moredItem.item.toString());
+
+      const newItems = cart.items.map((item) => {
+        if (item._id == req.body.itemId) {
+          item.count += 1;
+        }
+        return item;
+      });
+
+      const mored = await Cart.findOneAndUpdate(
+        { user: req.params.id },
+        {
+          items: newItems,
+          totalPrice: cart.totalPrice + product.price,
+        },
+        { new: true }
+      );
+      return res.json(mored);
+    } catch (err) {
+      return res.json(err);
+    }
+  },
+  oneLess: async (req, res) => {
+    try {
+      const cart = await Cart.findOne({ user: req.params.id });
+      const lessedItem = cart.items.find((item) => item._id == req.body.itemId);
+      const product = await Product.findById(lessedItem.item.toString());
+
+      const newItems = cart.items.map((item) => {
+        if (item._id == req.body.itemId) {
+          item.count -= 1;
+        }
+        return item;
+      });
+
+      const less = await Cart.findOneAndUpdate(
+        { user: req.params.id },
+        {
+          items: newItems,
+          totalPrice: cart.totalPrice - product.price,
+        },
+        { new: true }
+      );
+      return res.json(less);
     } catch (err) {
       return res.json(err);
     }
