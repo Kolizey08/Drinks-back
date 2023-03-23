@@ -9,6 +9,7 @@ module.exports.ProductController = {
         price: req.body.price,
         expo: req.body.expo,
         weight: req.body.weight,
+        category: req.body.category
       });
       res.json(product);
     } catch (error) {
@@ -24,6 +25,7 @@ module.exports.ProductController = {
         price: req.body.price,
         expo: req.body.expo,
         weight: req.body.weight,
+        category: req.body.category
       });
       res.json(product);
     } catch (error) {
@@ -40,7 +42,7 @@ module.exports.ProductController = {
   },
   getProduct: async (req, res) => {
     try {
-      const product = await Product.find()
+      const product = await Product.find().populate('category')
       res.json(product)
     } catch (error) {
       res.json(error.message)
