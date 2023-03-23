@@ -56,9 +56,9 @@ module.exports.cartController = {
         req.params.id,
         {
           $push: {
-            items: { item: req.body.item, count: req.body.count },
+            items: { item: req.body.item, count: 1 },
           },
-          totalPrice: cart.totalPrice + product.price * req.body.count,
+          totalPrice: cart.totalPrice + product.price,
         },
         { new: true }
       );
