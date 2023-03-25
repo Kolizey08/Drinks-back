@@ -61,6 +61,8 @@ module.exports.cartController = {
           totalPrice: cart.totalPrice + product.price,
         },
         { new: true }
+      ).populate(
+        "items.item"
       );
       return res.json(addedProduct);
     } catch (err) {
