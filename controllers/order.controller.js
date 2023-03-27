@@ -28,7 +28,7 @@ module.exports.orderController = {
   },
   getOrdersById: async (req, res) => {
     try {
-      const orderById = await Order.find({ user: req.params.user });
+      const orderById = await Order.find({ user: req.params.user }).populate('items.item');
       return res.json(orderById);
     } catch (err) {
       return res.json(err);

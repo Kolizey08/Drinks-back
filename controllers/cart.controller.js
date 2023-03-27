@@ -141,7 +141,7 @@ module.exports.cartController = {
       const product = await Product.findById(lessedItem.item.toString());
 
       const newItems = cart.items.map((item) => {
-        if (item._id == req.body.itemId) {
+        if (item._id == req.body.itemId && item.count > 1) {
           item.count -= 1;
         }
         return item;
